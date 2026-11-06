@@ -1,0 +1,316 @@
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+import base64, json, mimetypes
+root=Path(__file__).resolve().parent
+html=(root/'index.html').read_text(encoding='utf-8')
+css=(root/'styles.css').read_text(encoding='utf-8')
+js=(root/'app.js').read_text(encoding='utf-8')
+assets={}
+for pth in (root/'assets').rglob('*'):
+    if pth.is_file():
+        mime=mimetypes.guess_type(pth.name)[0] or 'application/octet-stream'
+        assets[pth.relative_to(root).as_posix()] = f'data:{mime};base64,'+base64.b64encode(pth.read_bytes()).decode()
+for path, uri in sorted(assets.items(),key=lambda x:-len(x[0])):
+    html=html.replace(path,uri)
+    js=js.replace(path,uri)
+html=html.replace('<link rel="stylesheet" href="styles.css">', '<style>'+css+'</style>')
+html=html.replace('<script src="app.js"></script>', '<script>'+js+'</script>')
+results=[]; errors=[]
+def check(name, condition): results.append({'test':name,'pass':bool(condition)})
+def open_test_app(browser,target):
+    pg=browser.new_page(viewport={'width':1365,'height':768})
+    pg.set_default_timeout(5000)
+    pg.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    pg.set_content(html,wait_until='load')
+    pg.locator('#boot-screen').click(); pg.wait_for_timeout(440)
+    pg.locator('#start-button').click()
+    pg.locator(f'#start-menu [data-start="{target}"]').click()
+    return pg
+with sync_playwright() as p:
+    browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox','--disable-gpu'])
+    page=browser.new_page(viewport={'width':1365,'height':768},device_scale_factor=1)
+    page.set_default_timeout(6000)
+    page.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    page.on('pageerror',lambda e: errors.append(str(e)))
+    page.on('console',lambda m: errors.append('console: '+m.text) if m.type=='error' else None)
+    page.set_content(html,wait_until='load')
+    page.screenshot(path=str(root/'reports/desktop-boot.png'),full_page=True)
+    check('title_personalized', page.title().startswith('KPANOU Kenneth'))
+    check('boot_screen_visible', page.locator('#boot-screen').is_visible())
+    page.locator('#boot-screen').click(); page.wait_for_timeout(720)
+    check('boot_to_desktop_without_auto_about', page.locator('#desktop').is_visible() and page.locator('.window[data-window="about"]').count()==0)
+    intro_photo=page.locator('.boot-photo img')
+    check('intro_uses_supplied_monochrome_portrait', intro_photo.count()==1 and intro_photo.evaluate('(img)=>img.complete && img.naturalWidth===704'))
+    page.locator('[data-shortcut="about"]').dblclick(); page.wait_for_timeout(120)
+    about=page.locator('.window[data-window="about"]')
+    about_photo=about.locator('.about-portrait')
+    check('about_uses_supplied_red_portrait', about_photo.count()==1 and about_photo.evaluate('(img)=>img.complete && img.naturalWidth===704'))
+    check('about_contains_identity', 'KPANOU Kenneth' in about.inner_text())
+    check('public_birth_detail_removed', 'Born:' not in about.inner_text() and 'April 2006' not in about.inner_text())
+    check('about_has_cofounder_role', 'Co-founder at Iconlabs' in about.inner_text())
+    check('about_navigation_links', about.locator('[data-action="skills"]').count()==1 and about.locator('[data-action="iconlabs"]').count()==1 and about.locator('[data-action="education"]').count()==1)
+    page.screenshot(path=str(root/'reports/desktop-about.png'),full_page=True)
+    about.locator('.window-control.close').click()
+
+    # Open each new profile app in a clean desktop to avoid intentional window stacking.
+    skills_page=open_test_app(browser,'skills'); skills=skills_page.locator('.window[data-window="skills"]')
+    check('skills_window_opens', skills.count()==1 and 'TypeScript' in skills.inner_text() and 'Python' in skills.inner_text())
+    skills_page.close()
+    education_page=open_test_app(browser,'education'); education=education_page.locator('.window[data-window="education"]')
+    check('education_window_opens', education.count()==1 and 'ESGIS Bénin' in education.inner_text() and '2028' in education.inner_text())
+    check('education_does_not_expose_birth_date', 'Né en avril 2006' not in js and '2006' not in education.inner_text())
+    education_page.close()
+    iconlabs_page=open_test_app(browser,'iconlabs'); iconlabs=iconlabs_page.locator('.window[data-window="iconlabs"]')
+    check('iconlabs_window_opens', iconlabs.count()==1 and 'CO-FOUNDER' in iconlabs.inner_text())
+    check('iconlabs_has_site_and_repository_links', iconlabs.locator('a[href="https://iconlabs-inky.vercel.app"]').count()==1 and iconlabs.locator('a[href="https://github.com/KennethKpn/Iconlabs"]').count()==1)
+    iconlabs_page.close()
+    contact_page=open_test_app(browser,'contact'); contact=contact_page.locator('.window[data-window="contact"]')
+    check('contact_emails_present', contact.locator('a[href="mailto:kpanoukenneth125@gmail.com"]').count()==1 and contact.locator('a[href="mailto:yissekpanou96@gmail.com"]').count()==1)
+    check('contact_social_links_present', contact.locator('a[href^="https://www.instagram.com/"]').count()==1 and contact.locator('a[href^="https://www.linkedin.com/"]').count()==1 and contact.locator('a[href^="https://t.me/"]').count()==1)
+    check('contact_whatsapp_link_present', contact.locator('a[href="https://wa.me/2290158593692"]').count()==1)
+    contact_page.close()
+
+    # Verified project and its external links.
+    page.locator('[data-shortcut="unyvon"]').dblclick(); page.wait_for_timeout(250)
+    unyvon=page.locator('.window[data-window="unyvon"]')
+    check('unyvon_case_opens', unyvon.count()==1 and 'Business OS' in unyvon.inner_text())
+    check('unyvon_has_live_product_repository_and_profile_links', unyvon.locator('a[href="https://unyvon.vercel.app"]').count()==1 and unyvon.locator('a[href="https://github.com/KennethKpn/UNYVON"]').count()==1 and unyvon.locator('a[href="https://github.com/KennethKpn"]').count()==1)
+    check('unyvon_public_source_disclosed', 'dépôt public' in unyvon.inner_text().lower() and 'code source privé' not in unyvon.inner_text().lower())
+    icon=page.locator('[data-shortcut="unyvon"]')
+    icon_before=icon.bounding_box()
+    page.mouse.move(icon_before['x']+icon_before['width']/2, icon_before['y']+icon_before['height']/2)
+    page.mouse.down(); page.mouse.move(icon_before['x']+icon_before['width']/2+72, icon_before['y']+icon_before['height']/2+46, steps=6); page.mouse.up()
+    icon_after=icon.bounding_box()
+    check('desktop_file_icon_drag', icon_after['x'] >= icon_before['x']+45 and icon_after['y'] >= icon_before['y']+25)
+    check('icon_drag_position_written', bool(icon.get_attribute('style')) and 'left:' in icon.get_attribute('style') and 'top:' in icon.get_attribute('style'))
+    page.screenshot(path=str(root/'reports/desktop-unyvon.png'),full_page=True)
+
+    # Additional verified projects and repository visibility labels.
+    page.locator('[data-shortcut="kaza"]').dblclick()
+    kaza=page.locator('.window[data-window="kaza"]')
+    check('kaza_case_opens', kaza.count()==1 and 'PropTech locative' in kaza.inner_text() and 'PostgreSQL / PostGIS' in kaza.inner_text())
+    check('kaza_private_source_disclosed', 'code source privé' in kaza.inner_text().lower() and kaza.locator('a[href^="https://github.com/KennethKpn/KAZA"]').count()==0)
+    kaza.locator('.window-control.close').click()
+
+    page.locator('[data-shortcut="marsal"]').dblclick()
+    marsal=page.locator('.window[data-window="marsal"]')
+    check('marsal_case_opens', marsal.count()==1 and 'sécurité électronique' in marsal.inner_text().lower() and marsal.locator('a[href="https://github.com/KennethKpn/MARSAL-THECNOLOGIE"]').count()==1)
+    marsal.locator('.window-control.close').click()
+
+    page.locator('[data-shortcut="eyram"]').dblclick()
+    eyram=page.locator('.window[data-window="eyram"]')
+    check('eyram_case_opens', eyram.count()==1 and 'WhatsApp' in eyram.inner_text() and eyram.locator('a[href="https://github.com/KennethKpn/E_YFRAM_BUSINESS"]').count()==1)
+    eyram.locator('.window-control.close').click()
+
+    page.locator('[data-shortcut="orca"]').dblclick()
+    orca=page.locator('.window[data-window="orca"]')
+    check('orca_case_opens', orca.count()==1 and 'décoration' in orca.inner_text().lower() and orca.locator('a[href="https://github.com/KennethKpn/ORCA-DECO"]').count()==1)
+    orca.locator('.window-control.close').click()
+    unyvon.locator('.maximize').click(); maxed='is-maximized' in unyvon.get_attribute('class')
+    unyvon.locator('.maximize').click()
+    check('maximize_restore', maxed and 'is-maximized' not in unyvon.get_attribute('class'))
+    before=unyvon.evaluate('(el)=>el.getBoundingClientRect().left'); bar=unyvon.locator('.titlebar').bounding_box()
+    page.mouse.move(bar['x']+80,bar['y']+10); page.mouse.down(); page.mouse.move(bar['x']+140,bar['y']+50,steps=5); page.mouse.up()
+    after=unyvon.evaluate('(el)=>el.getBoundingClientRect().left')
+    check('window_drag', after>before+20)
+    unyvon.locator('.minimize').click(); task=page.locator('.task-button[data-task="unyvon"]'); task.click()
+    check('taskbar_restore', not unyvon.evaluate('(el)=>el.classList.contains("is-minimized")'))
+    unyvon.locator('.close').click()
+    check('window_close', page.locator('.window[data-window="unyvon"]').count()==0)
+
+    # Explorer and design lab navigation.
+    page.locator('[data-shortcut="computer"]').dblclick()
+    computer = page.locator('.window[data-window="computer"]')
+    check('computer_has_github_shortcut', computer.locator('.file-item[data-action="github"]').count()==1 and 'GitHub Profile' in computer.inner_text())
+    computer.locator('.file-item[data-action="github"]').click()
+    github_from_computer = page.locator('.window[data-window="github"]')
+    check('computer_github_shortcut_opens_profile', github_from_computer.count()==1 and 'KennethKpn' in github_from_computer.inner_text())
+    github_from_computer.locator('.window-control.close').click(force=True)
+    computer = page.locator('.window[data-window="computer"]')
+    check('computer_shows_seven_objects', '7 object(s)' in computer.locator('.window-statusbar').inner_text())
+    computer.locator('.file-item[data-action="projects"]').click()
+    check('computer_opens_portfolio', page.locator('.window[data-window="projects"]').count()==1)
+    explorer=page.locator('.window[data-window="projects"]')
+    check('portfolio_separates_projects_from_skills', explorer.locator('.archive-section').count()==2 and 'Selected work' in explorer.inner_text() and 'Skills & areas' in explorer.inner_text())
+    check('portfolio_lists_six_selected_projects', explorer.locator('.archive-section').first.locator('.file-item').count()==6)
+    page.locator('.window[data-window="projects"] [data-project-open="frontend"]').click()
+    check('portfolio_folder_opens', page.locator('.window[data-window="frontend"]').count()==1)
+    # Close the top portfolio child by its own close control, then launch Design Lab.
+    page.locator('.window[data-window="frontend"] .window-control.close').click()
+    page.locator('[data-shortcut="photoshop"]').dblclick()
+    ps=page.locator('.window[data-window="photoshop"]')
+    before_text=ps.locator('.design-canvas').inner_text()
+    ps.locator('[data-ps-project="automation"]').click()
+    check('design_lab_selects_archive', 'Workflow Automation' in ps.locator('.design-canvas').inner_text() and before_text != ps.locator('.design-canvas').inner_text())
+    page.locator('#start-button').click()
+    check('start_menu_opens', page.locator('#start-menu').is_visible())
+    page.locator('#start-menu [data-start="github"]').click()
+    gh=page.locator('.window[data-window="github"]')
+    check('github_case_opens', gh.count()==1 and 'KennethKpn' in gh.inner_text() and gh.locator('[data-github-repos]').count()==1 and gh.locator('[data-repo-name]').count()==5)
+    check('github_profile_link_is_correct', gh.locator('a[href="https://github.com/KennethKpn"]').count()>=1)
+    check('github_curated_repos_only', gh.locator('[data-repo-name="UNYVON"]').count()==1 and gh.locator('[data-repo-name="MARSAL-THECNOLOGIE"]').count()==1 and gh.locator('[data-repo-name="E_YFRAM_BUSINESS"]').count()==1 and gh.locator('[data-repo-name="ORCA-DECO"]').count()==1 and gh.locator('[data-repo-name="Iconlabs"]').count()==1)
+    featured_unyvon = gh.locator('.github-featured section').first
+    check('github_unyvon_featured_public_link', gh.locator('a[href="https://github.com/KennethKpn/UNYVON"]').count() >= 2 and 'En production · dépôt public' in featured_unyvon.inner_text())
+    check('github_unyvon_not_mislabelled_private', 'code privé' not in featured_unyvon.inner_text().lower() and featured_unyvon.locator('a[href="https://unyvon.vercel.app"]').count()==1)
+    check('obsolete_github_handle_removed', 'KennethSalomon' not in js)
+    gh.locator('.window-control.close').click(force=True)
+    ps.locator('.window-control.close').click(force=True)
+    page.locator('.window .window-control.close').evaluate_all('(els)=>els.forEach(e=>e.click())')
+    page.screenshot(path=str(root/'reports/desktop-multiple-windows.png'),full_page=True)
+    # Bilingual experience: French is the default, English is complete on the main portfolio windows.
+    check('language_switcher_present', page.locator('.language-button[data-lang="fr"]').count()==1 and page.locator('.language-button[data-lang="en"]').count()==1)
+    page.locator('.language-button[data-lang="en"]').click(); page.wait_for_timeout(160)
+    page.locator('[data-shortcut="about"]').dblclick(); page.wait_for_timeout(100)
+    en_about=page.locator('.window[data-window="about"]')
+    check('english_about_translated', 'Welcome to my digital corner' in en_about.inner_text() and 'What I do' in en_about.inner_text() and 'Mes compétences' not in en_about.inner_text())
+    en_about.locator('.window-control.close').click()
+    page.locator('[data-shortcut="unyvon"]').dblclick(); page.wait_for_timeout(100)
+    en_uny=page.locator('.window[data-window="unyvon"]')
+    check('english_project_translated', 'An operational management system' in en_uny.inner_text() and 'Vue d’ensemble' not in en_uny.inner_text())
+    en_uny.locator('.window-control.close').click()
+    page.locator('.language-button[data-lang="fr"]').click(); page.wait_for_timeout(120)
+    check('french_restored', page.locator('html').get_attribute('lang')=='fr')
+    check('no_desktop_js_errors', len(errors)==0)
+
+    # Reference-sized desktop screenshots.
+    ref=browser.new_page(viewport={'width':1365,'height':573},device_scale_factor=1)
+    ref.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    ref.set_content(html,wait_until='load')
+    ref.locator('#boot-screen').click(); ref.wait_for_timeout(720)
+    ref.screenshot(path=str(root/'reports/desktop-reference-size-about.png'),full_page=True)
+    ref.locator('[data-shortcut="unyvon"]').dblclick(); ref.wait_for_timeout(300)
+    ref.screenshot(path=str(root/'reports/desktop-reference-size-unyvon.png'),full_page=True)
+    ref.close()
+
+    # Tablet layout and project window bounds.
+    tablet=browser.new_page(viewport={'width':820,'height':1180},device_scale_factor=1,is_mobile=False)
+    tablet.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    tablet.on('pageerror',lambda e: errors.append('tablet: '+str(e)))
+    tablet.set_content(html,wait_until='load')
+    tablet.locator('#boot-screen').click(); tablet.wait_for_timeout(720)
+    tablet.locator('[data-shortcut="about"]').dblclick(); tablet.wait_for_timeout(100)
+    tablet.locator('.window[data-window="about"] .close').click()
+    tablet.locator('[data-shortcut="kaza"]').dblclick(); tablet.wait_for_timeout(220)
+    rect=tablet.locator('.window[data-window="kaza"]').bounding_box()
+    check('tablet_project_in_bounds', rect['x']>=0 and rect['x']+rect['width']<=820 and rect['y']>=0 and rect['y']+rect['height']<=1180)
+    tablet.screenshot(path=str(root/'reports/tablet-desktop.png'),full_page=True)
+    tablet.screenshot(path=str(root/'reports/tablet-project-window.png'),full_page=True)
+    tablet.close()
+
+    # Mobile: touch interaction + full-screen window + contact app.
+    mobile=browser.new_page(viewport={'width':390,'height':844},device_scale_factor=1,is_mobile=True,has_touch=True)
+    mobile.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    mobile.on('pageerror',lambda e: errors.append('mobile: '+str(e)))
+    mobile.set_default_timeout(6000)
+    mobile.set_content(html,wait_until='load')
+    mobile.locator('#boot-screen').tap(); mobile.wait_for_timeout(720)
+    check('mobile_about_not_auto_open', mobile.locator('.window[data-window="about"]').count()==0)
+    mobile.screenshot(path=str(root/'reports/mobile-desktop.png'),full_page=True)
+    mobile_icon=mobile.locator('[data-shortcut="unyvon"]')
+    mobile_before=mobile_icon.bounding_box()
+    mobile.evaluate("""(p)=>{
+      const el=document.querySelector('[data-shortcut=\"unyvon\"]');
+      const base={bubbles:true,pointerId:77,pointerType:'touch',button:0,isPrimary:true};
+      el.dispatchEvent(new PointerEvent('pointerdown',{...base,clientX:p.x,clientY:p.y}));
+      document.dispatchEvent(new PointerEvent('pointermove',{...base,clientX:p.x+28,clientY:p.y+24}));
+      document.dispatchEvent(new PointerEvent('pointerup',{...base,clientX:p.x+28,clientY:p.y+24}));
+    }""", {'x':mobile_before['x']+mobile_before['width']/2,'y':mobile_before['y']+mobile_before['height']/2})
+    mobile_after=mobile_icon.bounding_box()
+    check('mobile_touch_icon_drag', mobile_after['x'] >= mobile_before['x']+15 and mobile_after['y'] >= mobile_before['y']+12)
+    target=mobile.locator('[data-shortcut="unyvon"]'); target.tap(); mobile.wait_for_timeout(100); target.tap(); mobile.wait_for_timeout(180)
+    mw=mobile.locator('.window[data-window="unyvon"]')
+    ok=mw.count()==1
+    if ok:
+        r=mw.bounding_box(); ok=r['width']>=375 and r['height']>=780
+        check('mobile_unyvon_fullscreen', ok)
+        check('mobile_project_content_visible', 'Business OS' in mw.inner_text())
+        mobile.screenshot(path=str(root/'reports/mobile-project-window.png'),full_page=True)
+    else:
+        check('mobile_unyvon_fullscreen', False); check('mobile_project_content_visible', False)
+    mw.locator('.window-control.close').tap()
+    mobile.locator('#start-button').tap(); check('mobile_start_menu', mobile.locator('#start-menu').is_visible())
+    mobile.locator('#start-menu [data-start="contact"]').tap()
+    check('mobile_contact_opens', mobile.locator('.window[data-window="contact"]').count()==1)
+    mobile.close()
+
+    # Standalone capture of the GitHub panel (without stacked windows from earlier scenarios).
+    github_context = browser.new_context(viewport={'width':1365,'height':768},device_scale_factor=1)
+    github_capture = github_context.new_page()
+    github_capture.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+    github_capture.set_content(html,wait_until='load')
+    github_capture.locator('#boot-screen').click(); github_capture.wait_for_timeout(700)
+    github_capture.locator('[data-shortcut="about"]').dblclick(); github_capture.wait_for_timeout(100)
+    github_capture.locator('.window[data-window="about"] .close').click()
+    github_capture.locator('#start-button').click()
+    github_capture.locator('#start-menu [data-start="github"]').click(); github_capture.wait_for_timeout(500)
+    check('github_panel_capture_is_standalone', github_capture.locator('.window').count()==1 and 'En production · dépôt public' in github_capture.locator('.github-featured section').first.inner_text())
+    github_capture.screenshot(path=str(root/'reports/desktop-github-panel.png'),full_page=True)
+    github_context.close()
+
+    # Wallpaper video: verify the remote asset is not requested at boot and is loaded only after entry.
+    video_context = browser.new_context(viewport={'width':1280,'height':800},device_scale_factor=1)
+    fixture = root/'test-fixtures/wallpaper-fixture.mp4'
+    video_context.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(fixture), content_type='video/mp4'))
+    video_page = video_context.new_page()
+    video_page.set_default_timeout(7000)
+    video_page.set_content(html,wait_until='load')
+    video = video_page.locator('#desktop-wallpaper-video')
+    check('wallpaper_video_source_is_lazy_before_entry', video.get_attribute('src') is None and '202606021731-e_hqa6sn.mp4' in (video.get_attribute('data-src') or ''))
+    check('wallpaper_video_is_muted_looping_inline_and_not_preloaded', video.evaluate("el => el.muted && el.loop && el.playsInline && el.preload === 'none'"))
+    video_page.locator('#boot-screen').click(); video_page.wait_for_timeout(1800)
+    check('wallpaper_video_is_loaded_after_desktop_entry', bool(video.get_attribute('src')))
+    video_page.wait_for_function("() => { const v=document.querySelector('#desktop-wallpaper-video'); return v && v.readyState >= 2 && !v.paused; }", timeout=5000)
+    check('wallpaper_video_plays_after_lazy_load', video.evaluate('el => !el.paused && el.muted'))
+    check('video_wallpaper_is_default', video_page.locator('.desktop-wallpaper').get_attribute('data-mode') == 'video' and 'is-video' in (video_page.locator('.desktop-wallpaper').get_attribute('class') or ''))
+    video_page.locator('#start-button').click(); video_page.locator('#start-menu [data-start="settings"]').click()
+    settings = video_page.locator('.window[data-window="settings"]')
+    settings.locator('input[name="wallpaper"][value="teal"]').check()
+    settings.locator('[data-action="apply-wallpaper"]').click()
+    check('static_wallpaper_setting_pauses_video', video.evaluate('el => el.paused') and video_page.locator('.desktop-wallpaper').get_attribute('data-mode') == 'teal')
+    settings.locator('input[name="wallpaper"][value="video"]').check()
+    settings.locator('[data-action="apply-wallpaper"]').click()
+    video_page.wait_for_function("() => { const v=document.querySelector('#desktop-wallpaper-video'); return v && !v.paused; }", timeout=5000)
+    check('video_wallpaper_can_be_reenabled_from_display_settings', not video.evaluate('el => el.paused'))
+    video_context.close()
+
+    # Viewport matrix: responsive desktop/mobile/tablet behavior and geometry after rotation.
+    viewport_cases = [(320,568),(390,844),(568,320),(768,1024),(820,1180),(1024,768),(1365,573),(1920,1080)]
+    for vw, vh in viewport_cases:
+        vp = browser.new_page(viewport={'width':vw,'height':vh},device_scale_factor=1,is_mobile=(vw<=700),has_touch=(vw<=700))
+        vp.set_default_timeout(3000)
+        vp.route('https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/**', lambda route: route.fulfill(path=str(root/'test-fixtures/wallpaper-fixture.mp4'), content_type='video/mp4'))
+        vp.set_content(html,wait_until='load')
+        vp.locator('#boot-screen').click(); vp.wait_for_timeout(500)
+        layer = vp.locator('#desktop-icon-layer').bounding_box()
+        all_icons = vp.locator('#desktop-icon-layer .shortcut').all()
+        icon_bounds = [node.bounding_box() for node in all_icons]
+        icons_fit = bool(layer) and all(r and r['x'] >= layer['x']-1 and r['y'] >= layer['y']-1 and r['x']+r['width'] <= layer['x']+layer['width']+1 and r['y']+r['height'] <= layer['y']+layer['height']+1 for r in icon_bounds)
+        check(f'viewport_icons_fit_{vw}x{vh}', icons_fit)
+        if vw <= 700:
+            target_icon = vp.locator('[data-shortcut="unyvon"]')
+            target_icon.tap(); vp.wait_for_timeout(80); target_icon.tap()
+        else:
+            vp.locator('[data-shortcut="unyvon"]').dblclick()
+        vp.wait_for_timeout(100)
+        win = vp.locator('.window[data-window="unyvon"]')
+        wb = win.bounding_box(); page_bounds = vp.locator('#window-layer').bounding_box()
+        window_fit = bool(wb and page_bounds and wb['x'] >= page_bounds['x']-1 and wb['y'] >= page_bounds['y']-1 and wb['x']+wb['width'] <= page_bounds['x']+page_bounds['width']+1 and wb['y']+wb['height'] <= page_bounds['y']+page_bounds['height']+1)
+        check(f'viewport_project_window_fits_{vw}x{vh}', window_fit)
+        # Rotate / resize the same live page to a second shape; existing icons and windows must reflow.
+        next_size = {'width':390,'height':844} if vw>700 else {'width':1024,'height':680}
+        vp.set_viewport_size(next_size); vp.wait_for_timeout(180)
+        resized_layer = vp.locator('#desktop-icon-layer').bounding_box()
+        resized_icons = [node.bounding_box() for node in vp.locator('#desktop-icon-layer .shortcut').all()]
+        resized_fit = bool(resized_layer) and all(r and r['x'] >= resized_layer['x']-1 and r['y'] >= resized_layer['y']-1 and r['x']+r['width'] <= resized_layer['x']+resized_layer['width']+1 and r['y']+r['height'] <= resized_layer['y']+resized_layer['height']+1 for r in resized_icons)
+        check(f'viewport_resize_reflows_icons_{vw}x{vh}', resized_fit)
+        resized_window = win.bounding_box(); resized_window_layer = vp.locator('#window-layer').bounding_box()
+        resized_window_fit = bool(resized_window and resized_window_layer and resized_window['x'] >= resized_window_layer['x']-1 and resized_window['y'] >= resized_window_layer['y']-1 and resized_window['x']+resized_window['width'] <= resized_window_layer['x']+resized_window_layer['width']+1 and resized_window['y']+resized_window['height'] <= resized_window_layer['y']+resized_window_layer['height']+1)
+        check(f'viewport_resize_reflows_windows_{vw}x{vh}', resized_window_fit)
+        vp.close()
+
+    browser.close()
+
+
+report={'results':results,'passed':sum(x['pass'] for x in results),'failed':sum(not x['pass'] for x in results),'errors':errors}
+(root/'reports/test-results.json').write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
+print(json.dumps(report,indent=2,ensure_ascii=False))

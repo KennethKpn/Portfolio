@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<rect width="64" height="64" fill="#f6f2e8"/>
+<rect x="5" y="5" width="54" height="54" fill="#643f9c" stroke="#111" stroke-width="3"/>
+<rect x="9" y="9" width="46" height="46" fill="none" stroke="#d9c5ff" stroke-width="1.5"/>
+<text x="32" y="38" text-anchor="middle" dominant-baseline="middle" font-family="Courier New,monospace" font-weight="bold" font-size="22" fill="#d9c5ff">UI</text>
+<path d="M9 48h46" stroke="#fff" stroke-opacity=".35"/>
+</svg>

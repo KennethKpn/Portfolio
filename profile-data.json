@@ -1,0 +1,49 @@
+{
+  "name": "KPANOU Kenneth",
+  "headline": "Full-Stack Web & App Developer · UI/UX Designer",
+  "location": "Benin",
+  "education": {
+    "institution": "ESGIS Bénin",
+    "from": 2025,
+    "expected_degree": "Licence",
+    "expected_year": 2028
+  },
+  "agency": {
+    "name": "Iconlabs",
+    "role": "Co-founder",
+    "focus": [
+      "Web design & development",
+      "Automation"
+    ]
+  },
+  "skills": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS",
+    "Node.js",
+    "PHP",
+    "Java",
+    "Python",
+    "Supabase"
+  ],
+  "contact": {
+    "email_primary": "kpanoukenneth125@gmail.com",
+    "email_alternative": "yissekpanou96@gmail.com",
+    "instagram": "https://www.instagram.com/kpnkenneth.studio/",
+    "linkedin": "https://www.linkedin.com/in/kenneth-kpanou-2a216a352",
+    "telegram": "https://t.me/+2290153594279",
+    "whatsapp_display": "+229 0158593692",
+    "whatsapp_url": "https://wa.me/2290158593692",
+    "github_project": "https://github.com/KennethKpn"
+  },
+  "github_profile": "https://github.com/KennethKpn",
+  "photos": {
+    "intro": "assets/photos/kenneth-intro-bw.jpg",
+    "about": "assets/photos/kenneth-about.jpg"
+  },
+  "github_login": "KennethKpn"
+}
