@@ -1,0 +1,139 @@
+{
+  "passed": 33,
+  "failed": 0,
+  "errors": [],
+  "results": [
+    {
+      "test": "1365x768_video_lazy",
+      "pass": true
+    },
+    {
+      "test": "1365x768_no_auto_about",
+      "pass": true
+    },
+    {
+      "test": "1365x768_about_icon_present",
+      "pass": true
+    },
+    {
+      "test": "1365x768_icons_fit",
+      "pass": true
+    },
+    {
+      "test": "1365x768_about_opens_on_demand",
+      "pass": true
+    },
+    {
+      "test": "1365x768_about_identity",
+      "pass": true
+    },
+    {
+      "test": "1365x768_unyvon_opens",
+      "pass": true
+    },
+    {
+      "test": "1024x768_video_lazy",
+      "pass": true
+    },
+    {
+      "test": "1024x768_no_auto_about",
+      "pass": true
+    },
+    {
+      "test": "1024x768_about_icon_present",
+      "pass": true
+    },
+    {
+      "test": "1024x768_icons_fit",
+      "pass": true
+    },
+    {
+      "test": "1024x768_about_opens_on_demand",
+      "pass": true
+    },
+    {
+      "test": "1024x768_about_identity",
+      "pass": true
+    },
+    {
+      "test": "1024x768_unyvon_opens",
+      "pass": true
+    },
+    {
+      "test": "390x844_video_lazy",
+      "pass": true
+    },
+    {
+      "test": "390x844_no_auto_about",
+      "pass": true
+    },
+    {
+      "test": "390x844_about_icon_present",
+      "pass": true
+    },
+    {
+      "test": "390x844_icons_fit",
+      "pass": true
+    },
+    {
+      "test": "390x844_about_opens_on_demand",
+      "pass": true
+    },
+    {
+      "test": "390x844_about_identity",
+      "pass": true
+    },
+    {
+      "test": "390x844_unyvon_opens",
+      "pass": true
+    },
+    {
+      "test": "320x568_video_lazy",
+      "pass": true
+    },
+    {
+      "test": "320x568_no_auto_about",
+      "pass": true
+    },
+    {
+      "test": "320x568_about_icon_present",
+      "pass": true
+    },
+    {
+      "test": "320x568_icons_fit",
+      "pass": true
+    },
+    {
+      "test": "320x568_about_opens_on_demand",
+      "pass": true
+    },
+    {
+      "test": "320x568_about_identity",
+      "pass": true
+    },
+    {
+      "test": "320x568_unyvon_opens",
+      "pass": true
+    },
+    {
+      "test": "french_default",
+      "pass": true
+    },
+    {
+      "test": "english_lang_active",
+      "pass": true
+    },
+    {
+      "test": "english_about",
+      "pass": true
+    },
+    {
+      "test": "english_unyvon",
+      "pass": true
+    },
+    {
+      "test": "french_restored",
+      "pass": true
+    }
+  ]
+}

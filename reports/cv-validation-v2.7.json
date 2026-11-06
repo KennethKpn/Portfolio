@@ -1,0 +1,123 @@
+{
+  "version": "2.7",
+  "passed": 23,
+  "failed": 0,
+  "javascript_errors": [],
+  "checks": [
+    {
+      "test": "pdf_is_packaged",
+      "passed": true,
+      "detail": "697741 bytes"
+    },
+    {
+      "test": "pdf_signature_valid",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "pdf_is_one_page_a4",
+      "passed": true,
+      "detail": "Verified with pdfinfo: 1 A4 page"
+    },
+    {
+      "test": "pdf_sha256_matches_source",
+      "passed": true,
+      "detail": "5d0b9327b7ae6e80c6231e7051a9e752c6380fc4c759c31e59bca2fae2e1f8de"
+    },
+    {
+      "test": "about_opens_on_demand",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_cv_button_visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_cv_button_download_attribute",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_cv_button_targets_pdf",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "about_cv_download_filename",
+      "passed": true,
+      "detail": "CV-Yisse-Kpanou.pdf"
+    },
+    {
+      "test": "about_cv_download_is_real_pdf",
+      "passed": true,
+      "detail": "697741 bytes"
+    },
+    {
+      "test": "portfolio_folder_cv_visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "portfolio_folder_cv_download_attr",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "portfolio_folder_cv_targets_pdf",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "portfolio_folder_download_filename",
+      "passed": true,
+      "detail": "CV-Yisse-Kpanou.pdf"
+    },
+    {
+      "test": "portfolio_folder_download_valid",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_cv_button_visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_cv_same_pdf",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_restored",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "320x568_cv_button_fits",
+      "passed": true,
+      "detail": "{'x': 37.17889404296875, 'y': 478.8232421875, 'width': 189.4851531982422, 'height': 33.97216796875}"
+    },
+    {
+      "test": "390x844_cv_button_fits",
+      "passed": true,
+      "detail": "{'x': 40.13654327392578, 'y': 444.4491271972656, 'width': 189.32088470458984, 'height': 33.94268798828125}"
+    },
+    {
+      "test": "820x1180_cv_button_fits",
+      "passed": true,
+      "detail": "{'x': 219.05819702148438, 'y': 885.4713745117188, 'width': 189.58282470703125, 'height': 33.9896240234375}"
+    },
+    {
+      "test": "1365x768_cv_button_fits",
+      "passed": true,
+      "detail": "{'x': 491.65643310546875, 'y': 679.3966064453125, 'width': 189.48529052734375, 'height': 33.97216796875}"
+    },
+    {
+      "test": "no_javascript_errors",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

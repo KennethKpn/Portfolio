@@ -1,6 +1,6 @@
 # KPANOU Kenneth — Desk 95 Portfolio
 
-Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.4 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
+Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.7 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
 
 ## Lancer le portfolio
 
@@ -56,14 +56,24 @@ Les fiches présentent une description, le contexte, l’approche, les technolog
 - `styles.css` — bureau, fenêtres et responsive.
 - `app.js` — navigation, fiches projets, interactions et panneau GitHub.
 - `profile-data.json` — données de profil et coordonnées.
-- `assets/` — portraits et vignettes de projets.
-- `reports/` — captures de validation et résultats automatisés.
+- `assets/` — portraits, vignettes de projets et `documents/CV-Yisse-Kpanou.pdf`.
+- `reports/` — résultats JSON des validations automatisées.
 - `test_local.py` — suite de tests Playwright facultative.
 - `RAPPORT-COMPARAISON.md` — audit des sources, décisions, points à confirmer et recommandations.
 
+## CV téléchargeable
+
+Le CV fourni par Kenneth est inclus sans modification dans `assets/documents/CV-Yisse-Kpanou.pdf`. Un bouton **Télécharger mon CV (PDF)** apparaît dans la fenêtre About ; une seconde entrée est disponible dans `My Computer` → `Portfolio`. Les libellés suivent la langue de l’interface, mais le document lui-même est la version française fournie. Le téléchargement propose le nom `CV-Yisse-Kpanou.pdf`.
+
+Avant de publier ce portfolio, vérifier que les informations personnelles présentes dans le CV (dont date de naissance, situation familiale, e-mails et téléphones) peuvent être rendues publiques.
+
 ## Validation
 
-La suite Playwright est réexécutée avec Chromium à chaque livraison ; le détail et le nombre effectif de tests sont consignés dans `reports/test-results.json`. Les scénarios couvrent l’ouverture des fiches, le profil GitHub, les liens de contact, le déplacement des icônes, les fenêtres, la navigation et les parcours tablette/mobile. Les captures et le résultat JSON se trouvent dans `reports/`. La dernière suite a réussi 54/54 scénarios.
+- Régression de la version précédente : **33/33** contrôles réussis (`reports/regression-v26-results.json`).
+- Intégration du CV : **23/23** contrôles réussis (`reports/cv-validation-v2.7.json`).
+- Téléchargement du PDF testé dans Chromium depuis les deux emplacements.
+- Bouton vérifié sur 320×568, 390×844, 820×1180 et 1365×768.
+- Aucune erreur JavaScript détectée pendant la suite ciblée.
 
 Pour rejouer les tests, il faut Python, Playwright et Chromium. Ces outils ne sont pas nécessaires pour lancer le portfolio.
 

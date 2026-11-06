@@ -116,6 +116,15 @@ button { font: inherit; color: inherit; }
 
 .about-caption { text-align: center; font-weight: bold; margin: 0 0 12px; }
 .about-intro { margin: 12px 0; }
+.cv-download-panel { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:9px; margin:12px 0; padding:10px; border:1px solid #8999ad; background:#e7e7e7; box-shadow:inset 1px 1px 0 #fff; }
+.cv-download-panel > div { display:flex; flex-direction:column; gap:2px; min-width:120px; }
+.cv-download-panel strong { color:#101b50; font-size:12px; }
+.cv-download-panel small { color:#444; font-size:10px; }
+.cv-download-button { display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:7px 11px; color:#111; font-weight:bold; text-decoration:none; cursor:pointer; }
+.cv-download-button:focus-visible, .file-download-item:focus-visible { outline:2px solid #000080; outline-offset:2px; }
+.file-download-item { color:inherit; text-decoration:none; }
+.file-download-item strong { max-width:100%; overflow-wrap:anywhere; text-align:center; font-size:10px; }
+.file-download-item small { color:inherit; opacity:.8; font-size:10px; }
 .visitor-counter { text-align: center; margin: 9px 0; }
 .visitor-counter span { display: inline-block; background: #050505; color: #00ff4c; padding: 2px 7px; letter-spacing: 3px; font-weight: bold; }
 .about-section { margin: 12px 0 6px; padding: 2px 8px; color: white; background: var(--navy); font-weight: bold; }
