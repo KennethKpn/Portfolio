@@ -1,0 +1,442 @@
+:root {
+  --teal: #009688;
+  --teal-deep: #007f76;
+  --navy: #000080;
+  --navy-hi: #10108e;
+  --chrome: #c0c0c0;
+  --paper: #f4ecd7;
+  --ink: #090909;
+  --shadow: #777;
+  --pixel: "Courier New", Courier, monospace;
+  --ui: Tahoma, "MS Sans Serif", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; min-width: 320px; margin: 0; overflow: hidden; }
+body { background: var(--teal); color: #111; font-family: var(--ui); user-select: none; -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; }
+#desktop-shell { position: relative; width: 100%; height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; background: var(--teal); isolation: isolate; }
+.is-hidden { display: none !important; }
+
+/* Win95 boot / faux crash screen */
+.boot-screen { position: absolute; inset: 0; z-index: 10000; overflow: hidden; background: #0a0ad6; color: #fff; font-family: var(--pixel); }
+.boot-caption { position: absolute; left: 50%; top: 31.5%; transform: translateX(-50%); padding: 3px 15px 4px; background: #c0c0c0; color: #0000b8; font-size: 14px; letter-spacing: .4px; }
+.boot-copy { position: absolute; left: 6%; top: 40%; margin: 0; max-width: 54%; white-space: pre-wrap; font-size: clamp(11px, 1vw, 14px); line-height: 1.48; font-weight: bold; text-shadow: 0 0 1px #fff; }
+.boot-figure { position: absolute; right: 7%; bottom: 0; width: min(32vw, 390px); height: min(86vh, 600px); margin: 0; }
+.boot-photo { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; pointer-events: none; }
+.boot-photo img { display: block; width: 100%; height: calc(100% - 25px); object-fit: contain; object-position: center bottom; filter: grayscale(1) contrast(1.06); mix-blend-mode: normal; }
+.boot-photo figcaption { width: 100%; padding: 5px 4px 2px; color: rgba(255,255,255,.82); text-align: center; font: bold 10px var(--pixel); letter-spacing: 2px; text-shadow: 1px 1px #000; }
+.boot-photo figcaption span { display: block; margin-top: 3px; font-size: 8px; letter-spacing: 3px; opacity: .72; }
+
+.boot-continue { position: absolute; left: 6%; bottom: 7%; border: 0; background: transparent; color: #fff; font-family: var(--pixel); font-weight: bold; font-size: 13px; padding: 9px 0; cursor: pointer; animation: bootBlink 1.1s steps(2,end) infinite; }
+.boot-continue:hover { text-decoration: underline; }
+@keyframes bootBlink { 50% { opacity: .25; } }
+.boot-screen.leaving { animation: bootOff .42s ease-in forwards; }
+@keyframes bootOff { 0% { opacity: 1; transform: scaleY(1); } 65% { opacity: 1; transform: scaleY(.012); } 100% { opacity: 0; transform: scaleY(0); } }
+
+/* Desktop */
+.desktop { position: absolute; inset: 0; overflow: hidden; background: var(--teal); }
+.desktop-wallpaper { position: absolute; z-index: 0; inset: 0; overflow: hidden; background-color: var(--teal); background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.022) 3px 4px), radial-gradient(ellipse at 62% 38%, rgba(255,255,255,.07), transparent 48%); }
+.desktop-wallpaper-video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center center; background: var(--teal); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.desktop-wallpaper.is-video .desktop-wallpaper-video { opacity: 1; }
+.desktop-wallpaper::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0,12,18,.12), rgba(0,12,18,.22)), repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.035) 3px 4px); }
+.desktop-wallpaper[data-mode="teal"] { background-color: var(--teal); }
+.desktop-wallpaper[data-mode="mint"] { background-color: #65b8a6; }
+.desktop-wallpaper[data-mode="blue"] { background-color: #0000aa; }
+.desktop-wallpaper[data-mode="teal"] .desktop-wallpaper-video,
+.desktop-wallpaper[data-mode="mint"] .desktop-wallpaper-video,
+.desktop-wallpaper[data-mode="blue"] .desktop-wallpaper-video { opacity: 0; }
+.desktop-topline { z-index: 1; }
+.desktop-topline { position: absolute; top: 7px; right: 12px; color: rgba(255,255,255,.33); font: 9px var(--pixel); letter-spacing: 1.2px; pointer-events: none; }
+.desktop-topline span { margin-left: 8px; opacity: .7; }
+.desktop-icon-layer { position: absolute; z-index: 1; inset: 0 0 36px; pointer-events: none; overflow: hidden; }
+.desktop-projects, .desktop-apps { position: static; display: contents; }
+.shortcut { position: absolute; left: 0; top: 0; width: 84px; height: 102px; pointer-events: auto; touch-action: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2px 3px 3px; border: 1px solid transparent; border-radius: 0; background: transparent; color: white; text-align: center; text-shadow: 1px 1px 1px #003f3c, -1px -1px 1px rgba(0,0,0,.2); cursor: default; outline: none; }
+.shortcut:hover { background: rgba(255,255,255,.06); }
+.shortcut.is-dragging { z-index: 5; background: rgba(0,0,128,.24); outline: 1px dotted rgba(255,255,255,.8); opacity: .92; transform: scale(1.04); }
+.shortcut.selected { background: rgba(0,0,128,.46); border: 1px dotted rgba(255,255,255,.84); }
+.shortcut img { display: block; width: 51px; height: 51px; object-fit: cover; padding: 3px; border: 2px solid #111; background: #eee; box-shadow: 3px 3px 0 rgba(0,0,0,.24); image-rendering: auto; }
+.shortcut .shortcut-icon { width: 51px; height: 51px; display: grid; place-items: center; color: #111; font-size: 31px; text-shadow: none; background: linear-gradient(135deg,#eaeaea,#999); border: 2px solid #111; box-shadow: 3px 3px 0 rgba(0,0,0,.24); }
+.shortcut .shortcut-label { display: block; width: 100%; margin-top: 5px; font-size: 12px; line-height: 13px; overflow-wrap: anywhere; }
+.shortcut.app-shortcut { width: 83px; }
+.shortcut.app-shortcut .shortcut-label { max-width: 79px; }
+
+/* Taskbar / Start */
+.taskbar { position: absolute; z-index: 9000; left: 0; right: 0; bottom: 0; height: 36px; padding: 3px 5px; display: flex; align-items: center; gap: 5px; background: var(--chrome); border-top: 2px solid #efefef; box-shadow: 0 -1px 0 #fff inset; }
+.start-button, .task-button { height: 28px; border: 2px solid; border-color: #fff #404040 #404040 #fff; background: var(--chrome); box-shadow: 1px 1px 0 #000; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; white-space: nowrap; cursor: default; }
+.start-button:active, .start-button.active, .task-button.active { border-color: #404040 #fff #fff #404040; box-shadow: inset 1px 1px 0 #777; }
+.start-flag { font-size: 17px; color: #080080; transform: skew(-9deg); }
+.taskbar-divider { width: 2px; height: 25px; border-left: 1px solid #777; border-right: 1px solid #fff; margin: 0 2px; }
+.task-buttons { display: flex; align-items: center; flex: 1; min-width: 0; gap: 4px; overflow: hidden; }
+.task-button { justify-content: flex-start; min-width: 90px; max-width: 180px; flex: 0 1 150px; font-weight: normal; overflow: hidden; text-overflow: ellipsis; }
+.task-button span { overflow: hidden; text-overflow: ellipsis; }
+.task-button .task-emoji { flex: 0 0 auto; }
+.system-tray { height: 27px; min-width: 91px; padding: 2px 8px; border: 1px solid; border-color: #777 #fff #fff #777; display: flex; align-items: center; justify-content: center; gap: 8px; font: 12px var(--ui); margin-left: auto; }
+.tray-status { font-size: 14px; }
+.start-menu { position: absolute; z-index: 9500; left: 5px; bottom: 36px; width: 218px; padding: 4px; background: var(--chrome); border: 2px solid; border-color: #fff #333 #333 #fff; box-shadow: 2px 2px 0 rgba(0,0,0,.35); display: flex; min-height: 285px; }
+.start-rail { width: 34px; align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 5px; color: #ddd; background: linear-gradient(180deg,#777 0%,#303030 100%); font-size: 22px; letter-spacing: 1px; writing-mode: vertical-rl; transform: rotate(180deg); }
+.start-rail strong { color: #fff; }
+.start-rail span { color: #a0a0a0; font-size: 13px; }
+.start-menu-items { flex: 1; padding: 2px; display: flex; flex-direction: column; }
+.start-menu-items button { display: flex; align-items: center; gap: 10px; min-height: 35px; padding: 4px 8px; text-align: left; background: transparent; border: 0; font-size: 12px; cursor: default; }
+.start-menu-items button:hover { background: var(--navy); color: white; }
+.start-menu-items button span { width: 23px; font-size: 18px; text-align: center; }
+.start-separator { height: 1px; margin: 5px 3px; background: #888; border-bottom: 1px solid #fff; }
+
+/* Windows */
+.window-layer { position: absolute; z-index: 10; inset: 0 0 36px 0; pointer-events: none; }
+.window { position: absolute; display: flex; flex-direction: column; min-width: 260px; min-height: 190px; max-width: calc(100vw - 10px); max-height: calc(100% - 8px); width: 640px; height: 480px; resize: both; overflow: hidden; pointer-events: auto; background: var(--chrome); border: 2px solid; border-color: #eee #292929 #292929 #eee; box-shadow: 4px 4px 0 rgba(0,0,0,.36); animation: windowIn .18s cubic-bezier(.2,.7,.2,1); }
+@keyframes windowIn { from { opacity: 0; transform: scale(.94) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.window.is-inactive .titlebar { background: linear-gradient(90deg,#777 0%,#9a9a9a 100%); }
+.window.is-minimized { display: none; }
+.window.is-maximized { left: 4px !important; top: 4px !important; width: calc(100% - 8px) !important; height: calc(100% - 8px) !important; max-width: none; max-height: none; resize: none; }
+.titlebar { flex: 0 0 25px; display: flex; align-items: center; gap: 6px; padding: 2px 3px 2px 5px; color: white; background: linear-gradient(90deg,var(--navy) 0%,#10108c 68%,#3838a5 100%); cursor: grab; touch-action: none; }
+.titlebar:active { cursor: grabbing; }
+.window-app-icon { flex: 0 0 17px; font-size: 13px; color: white; text-align: center; }
+.window-title { flex: 1; min-width: 0; font: bold 12px var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.window-controls { display: flex; align-items: center; gap: 3px; }
+.window-control { width: 20px; height: 18px; padding: 0; line-height: 13px; text-align: center; font-family: Arial,sans-serif; font-size: 13px; font-weight: bold; background: var(--chrome); border: 2px solid; border-color: #fff #333 #333 #fff; box-shadow: 1px 1px 0 #000; cursor: default; }
+.window-control:active { border-color: #333 #fff #fff #333; box-shadow: inset 1px 1px 0 #777; }
+.window-control.close { font-size: 15px; }
+.window-body { position: relative; flex: 1; min-height: 0; overflow: auto; background: var(--chrome); border-top: 1px solid #777; scrollbar-color: #bdbdbd #eee; scrollbar-width: auto; }
+.window-statusbar { flex: 0 0 21px; display: flex; align-items: center; padding: 2px 6px; border-top: 1px solid #fff; font: 11px var(--ui); color: #333; background: var(--chrome); }
+.window-statusbar span { border: 1px solid #999; border-color: #999 #fff #fff #999; padding: 2px 5px; }
+.window:focus-within { outline: none; }
+.window.is-maximized .window-body { resize: none; }
+
+/* About page */
+.about-window { width: 640px; height: 460px; }
+.about-window .titlebar { flex-basis: 20px; }
+.about-window .window-control { width: 18px; height: 16px; line-height: 12px; }
+.about-body { min-height: 100%; padding: 0 11%; background: repeating-linear-gradient(45deg,#f8f0dc 0 6px,#e9dfc8 6px 12px); }
+.about-paper { width: min(100%, 420px); min-height: 100%; margin: 0 auto; transform: translateX(-5px); padding: 10px 13px 24px; color: #090909; background: #f4ecd7; font: 13px/1.55 var(--pixel); }
+.about-marquee { display: flex; overflow: hidden; justify-content: center; padding: 3px 5px; color: white; background: var(--navy); font-size: 11px; white-space: nowrap; }
+.about-heading { margin: 8px 0 10px; text-align: center; font: bold 16px var(--pixel); color: blue; }
+.about-photo-frame { width: 178px; margin: 0 auto 6px; padding: 5px; border: 3px solid #111; background: white; box-shadow: 5px 5px 0 #888; }
+.about-photo-frame img { display: block; width: 100%; height: auto; aspect-ratio: 704 / 928; object-fit: cover; object-position: center 32%; filter: saturate(1.02) contrast(1.04); cursor: zoom-in; }
+
+.about-caption { text-align: center; font-weight: bold; margin: 0 0 12px; }
+.about-intro { margin: 12px 0; }
+.visitor-counter { text-align: center; margin: 9px 0; }
+.visitor-counter span { display: inline-block; background: #050505; color: #00ff4c; padding: 2px 7px; letter-spacing: 3px; font-weight: bold; }
+.about-section { margin: 12px 0 6px; padding: 2px 8px; color: white; background: var(--navy); font-weight: bold; }
+.about-facts { display: grid; grid-template-columns: 55px 1fr; gap: 2px 4px; margin: 8px 0; }
+.about-facts b { color: blue; }
+.about-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 13px; }
+.old-link { border: 1px solid; border-color: #fff #555 #555 #fff; background: #c0c0c0; padding: 3px 8px; font: 11px var(--pixel); cursor: default; }
+.old-link:hover { color: white; background: var(--navy); }
+
+/* Project windows */
+.project-window { width: 780px; height: 650px; }
+.project-page { min-height: 100%; background: #c4c4c4; padding: 8px 10px 20px; color: #111; font: 12px/1.45 Arial, sans-serif; }
+.project-hero { width: 100%; height: 200px; object-fit: cover; display: block; background: #ddd; filter: saturate(.9); }
+.project-name { margin: 10px 0 2px; font: 15px Arial,sans-serif; }
+.project-subtitle { margin: 0 0 8px; color: #888; font: 12px Arial,sans-serif; }
+.project-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; padding: 8px 4px; margin: 5px 0 12px; border-top: 1px solid #888; border-bottom: 1px solid #888; }
+.project-summary h4 { margin: 0 0 5px; font: 12px Arial,sans-serif; }
+.project-summary p { margin: 0; }
+.project-copy { margin: 8px 0; }
+.project-gallery-title { margin: 14px 0 8px; padding: 3px 7px; color: white; background: var(--navy); }
+.project-gallery { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.project-gallery figure { margin: 0; border: 1px solid #888; background: #eee; padding: 4px; }
+.project-gallery img { display: block; width: 100%; height: 165px; object-fit: cover; cursor: zoom-in; }
+.project-gallery figcaption { margin: 4px 1px 1px; font-size: 11px; color: #555; }
+.project-credit { margin-top: 13px; color: #555; font: 10px var(--pixel); text-align: right; }
+
+/* File explorer */
+.explorer { min-height: 100%; padding: 7px; background: #c0c0c0; }
+.menu-strip { display: flex; gap: 16px; padding: 3px 5px 7px; font-size: 12px; }
+.toolbar { display: flex; gap: 4px; padding: 5px; border: 1px solid; border-color: #777 #fff #fff #777; margin-bottom: 8px; }
+.toolbar button { min-height: 25px; padding: 2px 8px; border: 2px solid; border-color: #fff #555 #555 #fff; background: #c0c0c0; font-size: 11px; }
+.addressbar { display: flex; align-items: center; gap: 8px; padding: 4px 5px; border: 1px solid; border-color: #777 #fff #fff #777; background: white; font-size: 12px; }
+.addressbar span { color: #777; }
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(105px,1fr)); gap: 8px; padding: 13px 7px; }
+.file-item { min-height: 89px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; padding: 5px; border: 1px solid transparent; background: transparent; font-size: 11px; cursor: default; }
+.file-item:hover, .file-item.selected { background: #000080; color: #fff; border: 1px dotted #fff; }
+.file-item img { width: 49px; height: 49px; object-fit: cover; border: 2px solid #111; background: white; padding: 2px; }
+.file-glyph { width: 49px; height: 49px; display: grid; place-items: center; font-size: 31px; }
+
+/* Photoshop mock application */
+.photoshop { min-height: 100%; display: flex; flex-direction: column; padding: 4px; background: #bcbcbc; font: 11px Arial,sans-serif; }
+.ps-menu { padding: 3px 4px 7px; color: #111; }
+.ps-workspace { flex: 1; min-height: 300px; display: grid; grid-template-columns: 36px 1fr 132px; gap: 5px; background: #777; padding: 6px; }
+.ps-tools { display: flex; flex-direction: column; gap: 5px; align-items: center; padding: 5px 2px; background: #aaa; border: 1px solid #eee; }
+.ps-tools button { width: 27px; height: 25px; border: 1px solid #555; background: #c8c8c8; font-size: 14px; }
+.ps-canvas-wrap { display: grid; place-items: center; overflow: hidden; background: #696969; padding: 10px; }
+.ps-canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: white; box-shadow: 0 0 0 1px #333; }
+.ps-side { padding: 5px; background: #c0c0c0; overflow: auto; }
+.ps-side h4 { margin: 0 0 7px; padding: 4px; background: var(--navy); color: white; }
+.ps-thumb { width: 100%; margin-bottom: 6px; padding: 3px; display: block; border: 1px solid #888; background: #ddd; cursor: default; }
+.ps-thumb img { width: 100%; height: 55px; object-fit: cover; display: block; }
+.ps-thumb.active { border: 2px solid var(--navy); }
+.ps-footer { padding: 5px; font-size: 10px; color: #444; }
+
+/* Inbox */
+.mail-app { min-height: 100%; padding: 7px; background: #c0c0c0; font: 12px Arial,sans-serif; }
+.mail-toolbar { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
+.mail-toolbar button { padding: 5px 9px; border: 2px solid; border-color: #fff #555 #555 #fff; background: #c0c0c0; font-size: 11px; }
+.mail-layout { display: grid; grid-template-columns: 38% 1fr; min-height: 310px; border: 1px solid; border-color: #777 #fff #fff #777; background: white; }
+.mail-list { border-right: 1px solid #888; background: #eee; }
+.mail-row { display: block; width: 100%; padding: 8px 6px; text-align: left; border: 0; border-bottom: 1px solid #ccc; background: transparent; font-size: 11px; cursor: default; }
+.mail-row.active, .mail-row:hover { color: white; background: var(--navy); }
+.mail-row strong, .mail-row small { display: block; }
+.mail-row small { margin-top: 3px; opacity: .75; }
+.mail-reading { padding: 14px; overflow-wrap: anywhere; }
+.mail-reading h3 { margin: 0 0 12px; font-size: 15px; }
+.mail-reading .mail-meta { padding-bottom: 9px; border-bottom: 1px solid #ccc; color: #666; }
+.mail-reading p { line-height: 1.55; }
+
+/* Personal portfolio panels */
+.profile-page { min-height:100%; padding:22px 24px 26px; background:#f3efdf; color:#111; font:13px/1.55 var(--pixel); }
+.profile-page h2 { margin:2px 0 10px; color:#000080; font:bold 23px var(--pixel); }
+.profile-page h3 { margin:0 0 6px; color:#000080; font:bold 13px var(--pixel); }
+.profile-page p { margin:8px 0 14px; }
+.eyebrow { color:#087f78; font:bold 10px var(--pixel); letter-spacing:1.5px; text-transform:uppercase; }
+.profile-hero { display:flex; align-items:center; gap:16px; padding:12px; margin-bottom:16px; border:1px solid #aaa; background:linear-gradient(135deg,#fff,#e8e0ca); box-shadow:4px 4px 0 #aaa; }
+.profile-hero h2 { margin:0; }
+.profile-hero p { margin:3px 0 0; }
+.profile-monogram { width:74px; height:74px; flex:0 0 74px; display:grid; place-items:center; color:#fff; background:#001c35; border:3px solid #111; box-shadow:3px 3px 0 #888; font:bold 27px var(--pixel); }
+.profile-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin:16px 0; }
+.profile-cards section,.skill-group { padding:12px; border:1px solid #aaa; background:#fffaf0; box-shadow:2px 2px 0 #bbb; }
+.profile-cards p { margin:0; }
+.profile-note { margin-top:17px; padding:8px; color:#fff; background:#000080; font:bold 10px var(--pixel); letter-spacing:.6px; }
+.profile-actions { margin-top:16px!important; }
+.skill-groups { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:16px; }
+.skill-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.skill-tags span,.project-tech { padding:4px 7px; color:#071b2b; background:#d9eee7; border:1px solid #7ca99c; font:bold 10px var(--pixel); }
+.timeline { margin:22px 0; padding-left:18px; border-left:3px solid #008c82; }
+.timeline-item { position:relative; padding:0 0 14px 14px; }
+.timeline-item::before { content:""; position:absolute; left:-25px; top:4px; width:11px; height:11px; border:2px solid #000080; background:#f4ecd7; border-radius:50%; }
+.timeline-date { color:#008078; font:bold 11px var(--pixel); }
+.timeline-item h3 { margin-top:5px; }
+.status-chip { display:inline-block; margin-top:4px; padding:3px 6px; color:#174c2f; background:#d7ead8; border:1px solid #6c9974; font:bold 9px var(--pixel); }
+.contact-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin:15px 0; }
+.contact-list a { min-width:0; padding:9px; color:#111; text-decoration:none; border:1px solid #aaa; background:#fffaf0; box-shadow:2px 2px 0 #bbb; overflow-wrap:anywhere; }
+.contact-list a:hover { color:#fff; background:#000080; }
+.contact-list span { display:block; margin-bottom:4px; color:#087f78; font:bold 9px var(--pixel); letter-spacing:.8px; }
+.contact-list a:hover span { color:#ddd; }
+.contact-list strong { font-size:11px; }
+.personal-project-page { padding:18px 18px 22px; background:#f3efdf; }
+.personal-project-hero { display:flex; align-items:center; gap:18px; min-height:130px; padding:12px; background:linear-gradient(110deg,#fff,#e9e2d1); border:1px solid #aaa; box-shadow:4px 4px 0 #aaa; }
+.project-hero-mark { width:100px; height:100px; object-fit:cover; border:3px solid #111; box-shadow:4px 4px 0 #999; background:#fff; }
+.personal-project-hero .eyebrow { margin:0 0 5px; }
+.personal-project-hero .project-name { margin:0 0 4px; }
+.personal-project-hero .project-subtitle { margin:0; }
+.project-tech-list { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 16px; }
+.project-outlinks { display:flex; flex-wrap:wrap; gap:8px; margin:15px 0; }
+.project-outlink { display:inline-block; padding:6px 9px; color:#000080; border:2px solid; border-color:#fff #555 #555 #fff; background:#c0c0c0; text-decoration:none; font:bold 11px var(--pixel); }
+.project-outlink:hover { color:#fff; background:#000080; }
+.design-canvas { width:100%; height:100%; min-height:220px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; padding:15px; color:#fff; background:linear-gradient(145deg,#07182d,#007f76); text-align:center; font-family:var(--pixel); }
+.design-canvas-kp { display:grid; place-items:center; width:105px; height:105px; border:2px solid #cde5dc; color:#d7fff0; font:bold 35px var(--pixel); box-shadow:8px 8px 0 rgba(0,0,0,.35); }
+.design-canvas strong { font-size:clamp(14px,2vw,25px); }
+.design-canvas span { color:#b4e7dd; font-size:10px; letter-spacing:2px; }
+
+/* Context menus, dialogs, viewer */
+.context-menu { position: absolute; z-index: 9900; min-width: 170px; padding: 3px; background: var(--chrome); border: 2px solid; border-color: #fff #333 #333 #fff; box-shadow: 2px 2px 0 rgba(0,0,0,.25); }
+.context-menu button { display: block; width: 100%; padding: 6px 10px; text-align: left; border: 0; background: transparent; font-size: 12px; }
+.context-menu button:hover { background: var(--navy); color: white; }
+.context-menu .menu-rule { height: 1px; margin: 3px 2px; background: #888; border-bottom: 1px solid white; }
+.dialog-content { padding: 16px; background: #c0c0c0; font: 12px Arial,sans-serif; }
+.dialog-content .dialog-row { display: flex; align-items: center; gap: 14px; }
+.dialog-icon { font-size: 35px; }
+.dialog-actions { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.dialog-actions button { min-width: 76px; padding: 5px 10px; border: 2px solid; border-color: #fff #444 #444 #fff; background: #c0c0c0; }
+.toast { position: absolute; z-index: 11000; left: 50%; bottom: 50px; transform: translate(-50%,12px); padding: 8px 13px; color: white; background: rgba(0,0,0,.84); font: 11px var(--pixel); opacity: 0; pointer-events: none; transition: .18s ease; max-width: min(90vw, 420px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%,0); }
+.image-viewer { position: fixed; inset: 0; z-index: 12000; display: grid; place-items: center; background: rgba(0,0,0,.82); padding: 20px; cursor: zoom-out; }
+.image-viewer img { max-width: 94vw; max-height: 88vh; object-fit: contain; border: 4px solid #eee; box-shadow: 0 5px 25px #000; }
+
+@media (max-width: 1050px) and (min-width: 701px) {
+  .desktop-projects { left: 16px; grid-template-columns: repeat(3,78px); gap: 0 23px; grid-auto-rows: 110px; }
+  .desktop-apps { right: 10px; width: 170px; grid-auto-rows: 95px; }
+  .shortcut { width: 75px; height: 95px; }
+  .shortcut .shortcut-label { font-size: 11px; }
+  .window { max-width: calc(100vw - 18px); }
+  .project-window { width: min(760px, calc(100vw - 250px)); min-width: 430px; }
+}
+@media (max-width: 700px) {
+  #desktop-shell { min-height: 0; }
+  .boot-caption { top: 24%; font-size: 12px; }
+  .boot-copy { top: 32%; left: 6%; max-width: 88%; font-size: 10px; line-height: 1.42; }
+  .boot-figure { width: 42vw; height: 27vh; right: 4%; bottom: 40px; opacity: .88; }
+  .boot-monogram span { font-size: clamp(48px,18vw,90px); letter-spacing:-7px; }
+  .boot-monogram small { font-size:9px; letter-spacing:2px; }
+  .boot-continue { left: 6%; bottom: 4%; font-size: 11px; }
+  .desktop-topline { top: 5px; right: 7px; font-size: 8px; }
+  .desktop-topline span { display: none; }
+  .desktop-projects { left: 8px; right: 8px; top: 32px; width: auto; grid-template-columns: repeat(4,minmax(0,1fr)); grid-auto-rows: 78px; gap: 0 0; }
+  .desktop-apps { left: 8px; right: 8px; top: auto; bottom: 47px; width: auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 3px 4px; }
+  .shortcut { width: 100%; max-width: 78px; height: 72px; padding: 1px; }
+  .shortcut img, .shortcut .shortcut-icon { width: 38px; height: 38px; padding: 2px; font-size: 23px; }
+  .shortcut .shortcut-label { margin-top: 3px; font-size: 9px; line-height: 10px; max-width: 72px; }
+  .shortcut.app-shortcut { width: 65px; height: 64px; }
+  .shortcut.app-shortcut .shortcut-label { font-size: 9px; }
+  .taskbar { height: calc(41px + env(safe-area-inset-bottom, 0px)); padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px)); gap: 4px; }
+  .start-button { height: 29px; padding: 2px 6px; font-size: 11px; }
+  .taskbar-divider { height: 24px; margin: 0; }
+  .task-buttons { gap: 3px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .task-buttons::-webkit-scrollbar { display: none; }
+  .task-button { min-width: 34px; width: 38px; flex: 0 0 38px; height: 29px; justify-content: center; padding: 2px; }
+  .task-button span:not(.task-emoji) { display: none; }
+  .task-button .task-emoji { font-size: 15px; }
+  .system-tray { min-width: 69px; height: 27px; padding: 2px 4px; gap: 4px; font-size: 10px; }
+  .tray-status { display: none; }
+  .window-layer { inset: 0 0 calc(41px + env(safe-area-inset-bottom, 0px)) 0; }
+  .window { position: absolute !important; left: 7px !important; top: 7px !important; width: calc(100% - 14px) !important; height: calc(100% - 14px) !important; min-width: 0; min-height: 0; max-width: none; max-height: none; resize: none; box-shadow: 3px 3px 0 rgba(0,0,0,.42); }
+  .window.is-maximized { left: 2px !important; top: 2px !important; width: calc(100% - 4px) !important; height: calc(100% - 4px) !important; }
+  .titlebar { flex-basis: 31px; padding-left: 7px; }
+  .window-title { font-size: 12px; }
+  .window-control { width: 25px; height: 23px; font-size: 17px; }
+  .window-control.close { font-size: 19px; }
+  .window-statusbar { flex-basis: 21px; }
+  .about-body { padding: 8px 4%; }
+  .about-paper { padding: 9px 10px 18px; font-size: 12px; }
+  .about-heading { font-size: 14px; }
+  .about-photo-frame { width: 150px; }
+  .about-photo-frame img { height: 108px; }
+  .about-avatar-frame { height: 132px; }
+  .about-avatar { height: 112px; }
+  .about-avatar span { font-size:50px; }
+  .profile-page { padding:14px 12px 20px; font-size:12px; }
+  .profile-page h2 { font-size:19px; }
+  .profile-cards,.skill-groups,.contact-list { grid-template-columns:1fr; }
+  .personal-project-page { padding:10px 9px 16px; }
+  .personal-project-hero { gap:10px; min-height:100px; padding:8px; }
+  .project-hero-mark { width:68px; height:68px; }
+  .personal-project-hero .project-name { font-size:18px; }
+  .personal-project-hero .project-subtitle { font-size:11px; }
+  .design-canvas { min-height:180px; }
+  .project-page { padding: 6px 7px 18px; }
+  .project-hero { height: clamp(150px, 28vh, 220px); }
+  .project-summary { grid-template-columns: 1fr; gap: 8px; }
+  .project-gallery { grid-template-columns: 1fr; }
+  .project-gallery img { height: 190px; }
+  .ps-workspace { grid-template-columns: 30px 1fr; min-height: 320px; }
+  .ps-side { grid-column: 1 / -1; display: flex; gap: 6px; overflow-x: auto; }
+  .ps-side h4 { display: none; }
+  .ps-thumb { flex: 0 0 90px; }
+  .ps-thumb img { height: 46px; }
+  .mail-layout { grid-template-columns: 1fr; }
+  .mail-list { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid #888; }
+  .mail-row { flex: 0 0 145px; min-height: 66px; }
+  .mail-reading { min-height: 210px; }
+  .start-menu { bottom: calc(41px + env(safe-area-inset-bottom, 0px)); left: 4px; width: min(230px, calc(100vw - 8px)); }
+  .toast { bottom: 50px; font-size: 10px; }
+}
+@media (max-height: 500px) and (max-width: 700px) {
+  .desktop-projects { grid-auto-rows: 65px; grid-template-columns: repeat(5,minmax(0,1fr)); }
+  .desktop-apps { bottom: 45px; }
+  .shortcut { height: 61px; }
+  .shortcut img, .shortcut .shortcut-icon { width: 32px; height: 32px; }
+  .shortcut .shortcut-label { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+
+/* Draggable, persistent desktop icons */
+.desktop-icon-layer { -webkit-user-select: none; user-select: none; }
+.desktop-icon-layer .shortcut { will-change: left, top; }
+.desktop-icon-layer .shortcut:focus-visible { outline: 1px dotted white; }
+
+/* GitHub live repository browser */
+.github-page { min-height: 100%; }
+.github-featured { margin: 14px 0 18px; }
+.github-featured section { grid-column: 1 / -1; }
+.repo-tech { color: #555; font: 11px var(--pixel); }
+.github-repos-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 0 8px; padding-bottom: 5px; border-bottom: 1px solid #888; }
+.github-repos-heading h3 { margin: 0; font-size: 14px; }
+.github-status { padding: 8px 10px; background: #e6e6e6; border: 1px inset #fff; font-size: 12px; }
+.github-repo-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.github-repo-card { min-width: 0; padding: 10px; background: #ededed; border: 1px solid #999; box-shadow: 2px 2px 0 rgba(0,0,0,.12); }
+.github-repo-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.github-repo-head a { color: #000080; font-weight: bold; overflow-wrap: anywhere; }
+.github-repo-card p { margin: 8px 0; font-size: 12px; line-height: 1.45; }
+.github-repo-card small { display: block; color: #555; font-size: 10px; }
+.repo-language { flex: 0 0 auto; padding: 2px 5px; background: #d4d4d4; border: 1px solid #aaa; font-size: 10px; }
+.repo-home-link { display: inline-block; margin-top: 7px; font-size: 11px; }
+.github-page .profile-note a { color: inherit; }
+
+@media (max-width: 1050px) {
+  .boot-figure { right: 3%; width: min(38vw, 360px); height: min(76vh, 520px); }
+}
+@media (max-width: 700px) {
+  .desktop-icon-layer { inset: 0 0 calc(41px + env(safe-area-inset-bottom, 0px)); }
+  .shortcut { width: 78px; height: 72px; }
+  .shortcut.app-shortcut { width: 78px; height: 64px; }
+  .shortcut img, .shortcut .shortcut-icon { width: 38px; height: 38px; padding: 2px; font-size: 23px; }
+  .shortcut .shortcut-label { margin-top: 3px; font-size: 9px; line-height: 10px; max-width: 72px; }
+  .about-photo-frame { width: 154px; }
+  .boot-figure { width: min(70vw, 300px); height: min(47vh, 370px); right: 0; bottom: 1%; }
+  .boot-photo figcaption { font-size: 8px; }
+  .github-repo-list { grid-template-columns: 1fr; }
+}
+@media (max-height: 500px) and (max-width: 700px) {
+  .boot-figure { width: min(34vw, 250px); height: 72vh; right: 2%; }
+}
+
+/* The icon groups are semantic containers only; every shortcut shares the desktop coordinate plane. */
+#desktop-icon-layer > .desktop-projects, #desktop-icon-layer > .desktop-apps { position: static !important; display: contents !important; width: auto !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; }
+#desktop-icon-layer > .shortcut, #desktop-icon-layer .shortcut { position: absolute; }
+
+.shortcut img { -webkit-user-drag: none; user-drag: none; }
+
+
+/* Curated portfolio navigation: real projects first, skill archives second. */
+.archive-section { margin: 13px 4px 18px; }
+.archive-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:5px 8px; color:#fff; background:#000080; }
+.archive-heading h3 { margin:0; font-size:13px; }
+.archive-heading span { font:10px var(--pixel); color:#d8e7ff; }
+.archive-section > p { margin:6px 3px 2px; color:#555; font-size:11px; }
+.archive-section .file-grid { padding-top:8px; border-bottom:1px solid #999; }
+.file-status { display:block; max-width:112px; color:#08736c; font-size:9px; line-height:1.25; text-align:center; }
+.project-stage { display:inline-block; margin-top:8px; }
+.private-source { color:#734b10; background:#f4e6c8; border-color:#c69a52; }
+.project-summary { align-items:start; }
+.github-private-featured { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:14px 0 18px; }
+.github-private-featured section { min-width:0; padding:10px; background:#fffaf0; border:1px solid #b49c70; box-shadow:2px 2px 0 #c6b58f; }
+.github-private-featured h3 { margin:0 0 6px; color:#000080; font-size:14px; }
+.github-private-featured p { margin:6px 0; font-size:12px; line-height:1.4; }
+.github-private-featured .status-chip { margin:5px 5px 0 0; }
+.github-page .profile-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.github-repo-card { display:flex; flex-direction:column; }
+.github-repo-card .repo-home-link { margin-top:auto; padding-top:8px; }
+@media (max-width: 700px) {
+  .project-summary { grid-template-columns:1fr; gap:9px; }
+  .personal-project-hero { align-items:flex-start; gap:10px; }
+  .project-hero-mark { width:72px; height:72px; flex:0 0 72px; }
+  .github-private-featured { grid-template-columns:1fr; }
+  .archive-section .file-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .file-status { font-size:8px; }
+}
+
+
+/* Adaptive video wallpaper and viewport-safe Desk 95 layout. */
+@supports (height: 100svh) {
+  #desktop-shell { min-height: 0; }
+}
+@media (max-width: 700px) {
+  .desktop-wallpaper-video { object-position: 50% 50%; }
+  .desktop-wallpaper::after { background: linear-gradient(180deg, rgba(0,12,18,.18), rgba(0,12,18,.28)), repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.035) 3px 4px); }
+}
+@media (min-width: 1600px) and (min-aspect-ratio: 2/1) {
+  .desktop-wallpaper-video { object-position: 50% 50%; }
+}
+@media (max-height: 520px) and (min-width: 701px) {
+  .shortcut { transform: scale(.9); transform-origin: top left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desktop-wallpaper-video { display: none; }
+  .desktop-wallpaper::after { transition: none; }
+}
+
+
+/* v2.6: compact bilingual control + visual target for the video gesture */
+.language-switcher { height: 27px; display:flex; align-items:center; gap:2px; padding:2px; border:1px solid; border-color:#777 #fff #fff #777; background:var(--chrome); }
+.language-button { min-width:24px; height:21px; padding:1px 4px; border:1px solid; border-color:#fff #555 #555 #fff; background:#c0c0c0; font:10px var(--pixel); cursor:default; }
+.language-button.active { border-color:#555 #fff #fff #555; background:#000080; color:#fff; }
+.shortcut[data-shortcut="about"] { animation: aboutTargetPulse 2.8s ease-in-out infinite; }
+.shortcut[data-shortcut="about"].selected, .shortcut[data-shortcut="about"].is-dragging { animation:none; }
+@keyframes aboutTargetPulse { 0%,100% { filter: drop-shadow(0 0 0 rgba(255,255,255,0)); } 50% { filter: drop-shadow(0 0 7px rgba(255,255,255,.48)); } }
+@media (max-width:700px) { .language-switcher { margin-left:auto; } .language-button { min-width:22px; padding:1px 3px; } }
+@media (prefers-reduced-motion: reduce) { .shortcut[data-shortcut="about"] { animation:none; } }
