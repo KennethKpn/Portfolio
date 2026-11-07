@@ -1,6 +1,6 @@
 # KPANOU Kenneth — Desk 95 Portfolio
 
-Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.8 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
+Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.9 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
 
 ## Lancer le portfolio
 
@@ -61,6 +61,9 @@ Les fiches présentent une description, le contexte, l’approche, les technolog
 - `test_local.py` — suite de tests Playwright facultative.
 - `RAPPORT-COMPARAISON.md` — audit des sources, décisions, points à confirmer et recommandations.
 - `RAPPORT-CERTIFICATION-V2.8.md` — source, intégration et qualification exacte du certificat Anthropic.
+- `RAPPORT-CREDENTIALS-V2.9.md` — inventaire et qualification des trois justificatifs Anthropic / Claude Academy.
+- `MISE-A-JOUR-2026-11-07-V2.9.md` — changements apportés à la version 2.9.
+- `verify_v29.py` — tests ciblés de la section Formation & certifications et de ses trois liens.
 - `reports/certificate-validation-v2.8.json` — tests de téléchargement, de langue et de responsive du certificat.
 
 ## CV téléchargeable
@@ -101,3 +104,13 @@ Pour rejouer les tests, il faut Python, Playwright et Chromium. Ces outils ne so
 Le lien fourni par Kenneth est intégré dans le bouton « Vérifier le certificat ». Le chargement de cette page externe n’a pas pu être confirmé depuis l’environnement de test ; le bouton ouvre bien l’URL demandée, mais le portfolio ne prétend pas avoir réalisé une vérification en direct du registre Skilljar.
 
 Le PDF reste inclus dans `assets/documents/Certificate-Claude-with-Anthropic-API.pdf` et n’a pas été modifié.
+
+
+## Badges Claude Academy ajoutés en v2.9
+
+La fenêtre **Formation & certifications** présente désormais trois justificatifs distincts : un **Certificate of Completion** Anthropic Education (6 novembre 2026), puis deux **Course Completion Badges** Claude Academy (7 novembre 2026). Chaque badge ouvre son URL de vérification officielle fournie sur le document. Les deux badges sont présentés comme badges de complétion, et non comme certifications professionnelles fondées sur un examen.
+
+- **AI capabilities and limitations** — [Vérifier le badge](https://academy.claude.com/verify/c4e4cc5f3d7dda4bae246fa4e00eca71).
+- **Building with the Claude API** — [Vérifier le badge](https://academy.claude.com/verify/e6d6cacb0bd49e296d1863c3aefb28bb).
+
+La fiche About annonce désormais les trois justificatifs et conduit à la section correspondante. Le certificat Skilljar reste téléchargeable ; les deux badges Claude Academy ouvrent leurs pages de vérification, sans que leurs PDF soient publiés séparément dans le dépôt.
