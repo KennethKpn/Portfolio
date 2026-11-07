@@ -64,5 +64,21 @@
         "Agents & workflows"
       ]
     }
+  ],
+  "completion_badges": [
+    {
+      "title": "AI capabilities and limitations",
+      "issuer": "Claude Academy",
+      "credential_type": "Course Completion Badge",
+      "completed_at": "2026-11-07",
+      "verification_url": "https://academy.claude.com/verify/c4e4cc5f3d7dda4bae246fa4e00eca71"
+    },
+    {
+      "title": "Building with the Claude API",
+      "issuer": "Claude Academy",
+      "credential_type": "Course Completion Badge",
+      "completed_at": "2026-11-07",
+      "verification_url": "https://academy.claude.com/verify/e6d6cacb0bd49e296d1863c3aefb28bb"
+    }
   ]
 }
