@@ -1,0 +1,2 @@
+5d0b9327b7ae6e80c6231e7051a9e752c6380fc4c759c31e59bca2fae2e1f8de  assets/documents/CV-Yisse-Kpanou.pdf
+4b54b582ca640ae3a639d592100836881dea52d4de49c79c1900846661397169  assets/documents/Certificate-Claude-with-Anthropic-API.pdf

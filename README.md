@@ -1,6 +1,6 @@
 # KPANOU Kenneth — Desk 95 Portfolio
 
-Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.7 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
+Portfolio personnel interactif présenté comme un bureau Windows 95. La version 2.8 conserve l’identité rétro du template tout en clarifiant le profil, les réalisations et la visibilité réelle des dépôts GitHub.
 
 ## Lancer le portfolio
 
@@ -56,10 +56,12 @@ Les fiches présentent une description, le contexte, l’approche, les technolog
 - `styles.css` — bureau, fenêtres et responsive.
 - `app.js` — navigation, fiches projets, interactions et panneau GitHub.
 - `profile-data.json` — données de profil et coordonnées.
-- `assets/` — portraits, vignettes de projets et `documents/CV-Yisse-Kpanou.pdf`.
+- `assets/` — portraits, vignettes de projets, CV et certificat Anthropic dans `documents/`.
 - `reports/` — résultats JSON des validations automatisées.
 - `test_local.py` — suite de tests Playwright facultative.
 - `RAPPORT-COMPARAISON.md` — audit des sources, décisions, points à confirmer et recommandations.
+- `RAPPORT-CERTIFICATION-V2.8.md` — source, intégration et qualification exacte du certificat Anthropic.
+- `reports/certificate-validation-v2.8.json` — tests de téléchargement, de langue et de responsive du certificat.
 
 ## CV téléchargeable
 
@@ -67,10 +69,17 @@ Le CV fourni par Kenneth est inclus sans modification dans `assets/documents/CV-
 
 Avant de publier ce portfolio, vérifier que les informations personnelles présentes dans le CV (dont date de naissance, situation familiale, e-mails et téléphones) peuvent être rendues publiques.
 
+## Certificat Anthropic ajouté en v2.8
+
+La fenêtre **Formation & certifications** présente le certificat de fin de formation **Claude with the Anthropic API**, délivré par Anthropic Education. La page de validation fournie indique le cours **Building with the Claude API** et la date du **6 novembre 2026**. Le certificat PDF est téléchargeable dans le portfolio ; un lien distinct renvoie vers la vérification Skilljar : <https://verify.skilljar.com/c/jshitiofo33z>. La carte de la fenêtre About renvoie vers cette section.
+
+Le justificatif porte la mention **Certificate of Completion** : il est présenté comme un certificat de fin de formation, et non comme une certification professionnelle ou une licence réglementée. Le contenu du cours couvre l’API Claude, le prompting et son évaluation, le tool use, le RAG, MCP et les workflows d’agents.
+
 ## Validation
 
-- Régression de la version précédente : **33/33** contrôles réussis (`reports/regression-v26-results.json`).
-- Intégration du CV : **23/23** contrôles réussis (`reports/cv-validation-v2.7.json`).
+- Régression v2.6 : **33/33** contrôles réussis.
+- CV v2.7 : **23/23** contrôles réussis.
+- Certification v2.8 : **43/43** contrôles réussis (`reports/certificate-validation-v2.8.json`).
 - Téléchargement du PDF testé dans Chromium depuis les deux emplacements.
 - Bouton vérifié sur 320×568, 390×844, 820×1180 et 1365×768.
 - Aucune erreur JavaScript détectée pendant la suite ciblée.
@@ -85,3 +94,10 @@ Pour rejouer les tests, il faut Python, Playwright et Chromium. Ces outils ne so
 4. Les éventuels indicateurs mesurables et captures de produits que tu souhaites publier.
 
 **Important :** le ZIP est une version locale personnalisée. Aucun changement n’a été poussé sur GitHub et aucun déploiement public du portfolio n’a été déclenché.
+
+
+### Précision sur le lien de vérification Skilljar
+
+Le lien fourni par Kenneth est intégré dans le bouton « Vérifier le certificat ». Le chargement de cette page externe n’a pas pu être confirmé depuis l’environnement de test ; le bouton ouvre bien l’URL demandée, mais le portfolio ne prétend pas avoir réalisé une vérification en direct du registre Skilljar.
+
+Le PDF reste inclus dans `assets/documents/Certificate-Claude-with-Anthropic-API.pdf` et n’a pas été modifié.

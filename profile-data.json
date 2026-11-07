@@ -45,5 +45,24 @@
     "intro": "assets/photos/kenneth-intro-bw.jpg",
     "about": "assets/photos/kenneth-about.jpg"
   },
-  "github_login": "KennethKpn"
+  "github_login": "KennethKpn",
+  "certifications": [
+    {
+      "title": "Claude with the Anthropic API",
+      "course_title": "Building with the Claude API",
+      "issuer": "Anthropic Education",
+      "credential_type": "Certificate of Completion",
+      "completed_at": "2026-11-06",
+      "verification_url": "https://verify.skilljar.com/c/jshitiofo33z",
+      "document": "assets/documents/Certificate-Claude-with-Anthropic-API.pdf",
+      "topics": [
+        "Claude API",
+        "Prompt engineering",
+        "Tool use",
+        "RAG",
+        "Model Context Protocol",
+        "Agents & workflows"
+      ]
+    }
+  ]
 }

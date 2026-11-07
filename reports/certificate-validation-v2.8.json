@@ -1,0 +1,224 @@
+{
+  "version": "2.8",
+  "passed": 43,
+  "failed": 0,
+  "javascript_errors": [],
+  "certificate_sha256": "4b54b582ca640ae3a639d592100836881dea52d4de49c79c1900846661397169",
+  "checks": [
+    {
+      "test": "certificate_pdf_packaged",
+      "passed": true,
+      "detail": "108087 bytes"
+    },
+    {
+      "test": "certificate_pdf_signature",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "certificate_pdf_matches_original_upload_sha256",
+      "passed": true,
+      "detail": "sha256=4b54b582ca640ae3a639d592100836881dea52d4de49c79c1900846661397169"
+    },
+    {
+      "test": "certificate_filename_is_clear",
+      "passed": true,
+      "detail": "Certificate-Claude-with-Anthropic-API.pdf"
+    },
+    {
+      "test": "french_is_default",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "about_teaser_visible_in_french",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "about_teaser_includes_completion_date",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "education_window_opens_from_about_teaser",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_window_title_updated",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_certificate_title_correct",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_course_title_correct",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_issuer_and_date_visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_certificate_type_is_completion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "verification_link_exact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "verification_link_opens_safely",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_download_name",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_download_href_targets_exact_asset",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_download_filename",
+      "passed": true,
+      "detail": "Certificate-Claude-with-Anthropic-API.pdf"
+    },
+    {
+      "test": "french_download_is_original_pdf",
+      "passed": true,
+      "detail": "108087 bytes"
+    },
+    {
+      "test": "english_lang_attribute",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_education_heading",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_window_title_updated",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_certificate_completion_label",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_course_title",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_download_label",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_verify_label",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "english_download_is_same_original_pdf",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "french_can_be_restored",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "320x568_about_teaser_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 26.078125, 'y': 536.890625, 'width': 257.84375, 'height': 115.046875}"
+    },
+    {
+      "test": "320x568_certificate_card_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 21, 'y': 377.78125, 'width': 278, 'height': 461.8125}"
+    },
+    {
+      "test": "320x568_certificate_download_button_fit",
+      "passed": true,
+      "detail": "{'x': 32, 'y': 708.71875, 'width': 256, 'height': 34}"
+    },
+    {
+      "test": "320x568_certificate_page_scrollable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "390x844_about_teaser_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 29.01062774658203, 'y': 502.3233337402344, 'width': 321.9868698120117, 'height': 99.46560668945312}"
+    },
+    {
+      "test": "390x844_certificate_card_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 21, 'y': 355.78125, 'width': 348, 'height': 424.625}"
+    },
+    {
+      "test": "390x844_certificate_download_button_fit",
+      "passed": true,
+      "detail": "{'x': 32, 'y': 649.53125, 'width': 326, 'height': 34}"
+    },
+    {
+      "test": "390x844_certificate_page_scrollable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "820x1180_about_teaser_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 208.1644287109375, 'y': 943.3501586914062, 'width': 393.6793212890625, 'height': 111.00335693359375}"
+    },
+    {
+      "test": "820x1180_certificate_card_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 132, 'y': 592.421875, 'width': 608, 'height': 305.640625}"
+    },
+    {
+      "test": "820x1180_certificate_download_button_fit",
+      "passed": true,
+      "detail": "{'x': 146, 'y': 819.125, 'width': 239.84375, 'height': 34}"
+    },
+    {
+      "test": "1365x768_about_teaser_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 480.5614318847656, 'y': 737.4537963867188, 'width': 393.8802185058594, 'height': 111.05999755859375}"
+    },
+    {
+      "test": "1365x768_certificate_card_horizontal_fit",
+      "passed": true,
+      "detail": "{'x': 404.5, 'y': 386.421875, 'width': 608, 'height': 305.640625}"
+    },
+    {
+      "test": "1365x768_certificate_download_button_fit",
+      "passed": true,
+      "detail": "{'x': 418.5, 'y': 613.125, 'width': 239.84375, 'height': 34}"
+    },
+    {
+      "test": "no_javascript_errors",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}
